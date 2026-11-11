@@ -1,0 +1,27 @@
+INVENTA MANUALIDADES - PAQUETE OFFLINE
+
+ARCHIVOS:
+- index.html: menú principal
+- experimentos.html: calculadora de experimentos
+- maquetas.html: calculadora de maquetas
+- pedidos.html: nota de pedidos
+- rastreo.html: generador de seguimiento
+- icons/: iconos de la aplicación
+- manifest.webmanifest y sw.js: instalación PWA y caché offline
+
+ADMINISTRADOR:
+Usuario: inventa
+Clave: 1234
+
+IMPORTANTE SOBRE EL MODO SIN INTERNET:
+1. Descomprime la carpeta.
+2. Sube TODO el contenido de esta carpeta a la raíz de un repositorio GitHub Pages (o a un hosting HTTPS).
+3. Abre una vez la dirección publicada con Internet y espera unos segundos para que el navegador descargue la caché.
+4. En Chrome Android: menú ⋮ > Instalar aplicación / Añadir a pantalla principal.
+5. Después de esa primera carga, abre la aplicación instalada y las páginas principales funcionan sin conexión.
+
+No abras index.html directamente desde el administrador de archivos esperando que el modo PWA funcione: los Service Workers requieren HTTPS o localhost.
+Los datos y configuraciones se guardan localmente en el navegador de ese dispositivo. No se sincronizan automáticamente entre celulares ni entre navegadores.
+
+SEGURIDAD:
+El acceso de administrador es una barrera de interfaz para uso local, no seguridad fuerte: las credenciales están dentro del código cliente. No uses esta solución para proteger datos sensibles.

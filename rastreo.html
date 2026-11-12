@@ -1,16 +1,82 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#00D1C1"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png"><title>Rastreo de pedidos - INVENTA</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#00D1C1;padding:12px;min-height:100vh}.back{display:block;max-width:460px;margin:0 auto 10px;color:#164b4b;text-decoration:none;font-size:13px}.card{background:white;max-width:460px;margin:auto;border-radius:22px;padding:18px;box-shadow:0 10px 30px #0003}input,select{width:100%;padding:13px;border-radius:12px;border:2px solid #ddd;margin:7px 0;font-size:16px}input:focus,select:focus{outline:2px solid #6c5ce7}.btn{width:100%;padding:14px;border:0;border-radius:14px;font-weight:800;color:white;margin:6px 0;cursor:pointer}.b-gen{background:#6c5ce7}.b-share{background:#25d366}#preview{width:100%;margin-top:12px;border-radius:12px;border:2px solid #eee;display:none}.logo{width:110px;height:110px;border-radius:50%;display:block;margin:0 auto 8px;border:3px solid #2d0b5a;object-fit:cover}.admin{max-width:460px;margin:0 auto 8px;text-align:right}.admin button{padding:8px 12px;border:1px solid #2d0b5a;background:#ffffffaa;border-radius:8px;color:#2d0b5a;font-weight:700}.settings{display:none;max-width:460px;margin:0 auto 10px;background:white;padding:12px;border-radius:12px}.is-admin .settings{display:block}.settings label{display:block;font-size:12px;color:#444}.settings input{padding:9px;margin:4px 0}.hint{text-align:center;font-size:12px;color:#666}
-</style></head><body><a class="back" href="./index.html">← Menú principal</a><div class="admin"><button id="adminBtn">ADMIN</button></div><div class="settings" id="settings"><b>Configuración administrativa</b><label>Nombre del negocio<input id="brandName"></label><label>Descripción<input id="brandDesc"></label><button id="saveSettings" class="btn b-gen">Guardar configuración</button></div>
-<div class="card"><img src="./icons/icon-192.png" id="logo" class="logo"><h2 id="brandTitle" style="text-align:center;color:#2D0B5A;margin:0">INVENTA MANUALIDADES</h2><p id="brandSubtitle" style="text-align:center;color:#666;margin:0 0 12px;font-size:13px">MAQUETAS • MANUALIDADES • EXPERIMENTOS • PROYECTOS ESCOLARES</p>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:#00D1C1;padding:12px;min-height:100vh}.back{display:block;max-width:460px;margin:0 auto 10px;color:#164b4b;text-decoration:none;font-size:13px}.card{background:white;max-width:460px;margin:auto;border-radius:22px;padding:18px;box-shadow:0 10px 30px #0003}input,select{width:100%;padding:13px;border-radius:12px;border:2px solid #ddd;margin:7px 0;font-size:16px}input:focus,select:focus{outline:2px solid #6c5ce7}.btn{width:100%;padding:14px;border:0;border-radius:14px;font-weight:800;color:white;margin:6px 0;cursor:pointer}.b-gen{background:#6c5ce7}.b-share{background:#25d366}#preview{width:100%;margin-top:12px;border-radius:12px;border:2px solid #eee;display:none}.logo{width:110px;height:110px;border-radius:50%;display:block;margin:0 auto 8px;border:3px solid #2d0b5a;object-fit:cover}.admin{max-width:460px;margin:0 auto 8px;display:flex;justify-content:space-between;align-items:center}.admin button{padding:8px 12px;border:1px solid #2d0b5a;background:#ffffffaa;border-radius:8px;color:#2d0b5a;font-weight:700}.settings{display:none;max-width:460px;margin:0 auto 10px;background:white;padding:12px;border-radius:12px}.is-admin .settings{display:block}.settings label{display:block;font-size:12px;color:#444}.settings input{padding:9px;margin:4px 0}.hint{text-align:center;font-size:12px;color:#666}
+</style></head><body><a class="back" href="./index.html">← Menú principal</a><div class="admin"><span id="syncStatus" style="font-size:11px;color:#164b4b">● local</span><button id="adminBtn">ADMIN</button></div><div class="settings" id="settings"><b>Configuración (sincronizada en todos)</b><label>Nombre del negocio<input id="brandName"></label><label>Descripción<input id="brandDesc"></label><button id="saveSettings" class="btn b-gen">Guardar configuración</button></div>
+<div class="card"><img src="./icons/icon-192.png" id="logo" class="logo"><h2 id="brandTitle" style="text-align:center;color:#2D0B5A;margin:0">INVENTA MANUALIDADES</h2><p id="brandSubtitle" style="text-align:center;color:#666;margin:0 0 12px;font-size:13px">MAQUETAS • MANUALIDADES • EXPERIMENTOS</p>
 <input id="pedido" placeholder="Nombre del trabajo"><input id="dir" placeholder="Lugar de entrega"><select id="estado"><option value="0">📦 PEDIDO</option><option value="1">✂️ EN TALLER</option><option value="2" selected>🛵 EN CAMINO</option><option value="3">📍 PEDIDO EN EL LUGAR</option></select>
-<button class="btn b-gen" id="generate">🎨 GENERAR IMAGEN</button><canvas id="c" width="1080" height="1650" style="display:none"></canvas><img id="preview" alt="Vista previa del seguimiento"><button class="btn b-share" id="share" style="display:none">📲 COMPARTIR IMAGEN</button><p id="msg" class="hint" style="display:none">Se abrirá el menú de compartir de tu celular si está disponible.</p></div>
+<button class="btn b-gen" id="generate">🎨 GENERAR IMAGEN</button><canvas id="c" width="1080" height="1650" style="display:none"></canvas><img id="preview" alt="Vista previa"><button class="btn b-share" id="share" style="display:none">📲 COMPARTIR IMAGEN</button><p id="msg" class="hint" style="display:none">Se abrirá el menú de compartir de tu celular.</p></div>
 <div id="login" style="position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:18px;z-index:20"><div style="background:white;padding:20px;border-radius:14px;width:min(320px,100%)"><b>Acceso administrador</b><input id="user" placeholder="Usuario"><input id="pass" type="password" placeholder="Clave"><p id="err" style="color:#b91c1c;font-size:12px"></p><button id="enter" class="btn b-gen">ENTRAR</button><button id="close" class="btn" style="background:#555">CERRAR</button></div></div>
-<script>
-const KEY="inventa_rastreo_config_v1";let admin=false,settings=load();function load(){try{return JSON.parse(localStorage.getItem(KEY))||{name:"INVENTA MANUALIDADES",desc:"MAQUETAS • MANUALIDADES • EXPERIMENTOS • PROYECTOS ESCOLARES"}}catch(e){return{name:"INVENTA MANUALIDADES",desc:"MAQUETAS • MANUALIDADES • EXPERIMENTOS • PROYECTOS ESCOLARES"}}}
-const $=id=>document.getElementById(id);function apply(){ $("brandTitle").textContent=settings.name;$("brandSubtitle").textContent=settings.desc;$("brandName").value=settings.name;$("brandDesc").value=settings.desc}
-function generar(){let canvas=$("c"),ctx=canvas.getContext("2d"),pedido=$("pedido").value.trim()||"Trabajo",dir=$("dir").value.trim()||"Lugar por confirmar",idx=Number($("estado").value);ctx.fillStyle="#00D1C1";ctx.fillRect(0,0,1080,1650);ctx.fillStyle="white";ctx.beginPath();ctx.roundRect(30,180,1020,1420,40);ctx.fill();ctx.fillStyle="#2D0B5A";ctx.beginPath();ctx.arc(540,110,95,0,Math.PI*2);ctx.fill();ctx.fillStyle="white";ctx.font="bold 42px Arial";ctx.textAlign="center";ctx.fillText("INVENTA",540,125);ctx.fillStyle="#2D0B5A";ctx.font="bold 48px Arial";ctx.textAlign="left";ctx.fillText("Seguimiento de Pedido",60,310);ctx.font="26px Arial";ctx.fillStyle="#555";ctx.fillText("Trabajo: "+pedido.slice(0,40),60,355);let estados=[{t:"PEDIDO",d:"Pedido confirmado",ic:"01"},{t:"EN TALLER",d:"Tu manualidad está en producción",ic:"02"},{t:"EN CAMINO",d:"En ruta con nuestro mensajero",ic:"03"},{t:"PEDIDO EN EL LUGAR",d:"Entregado / En el lugar",ic:"04"}];let y=450;estados.forEach((e,i)=>{let done=i<idx,curr=i===idx;if(i<3){ctx.strokeStyle=done||curr?"#00B894":"#eee";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(110,y+70);ctx.lineTo(110,y+160);ctx.stroke()}ctx.fillStyle=done?"#00B894":curr?"#6C5CE7":"#ddd";ctx.beginPath();ctx.arc(110,y+35,38,0,Math.PI*2);ctx.fill();ctx.fillStyle="white";ctx.font="bold 25px Arial";ctx.textAlign="center";ctx.fillText(done?"✓":e.ic,110,y+44);ctx.textAlign="left";ctx.fillStyle=done||curr?"#2D0B5A":"#aaa";ctx.font="bold 34px Arial";ctx.fillText(e.t,190,y+28);ctx.fillStyle="#555";ctx.font="24px Arial";ctx.fillText(e.d,190,y+68);let hora=curr?"Estado actual":done?"Completado":"Pendiente";ctx.fillStyle="#f1f2f6";ctx.fillRect(190,y+85,400,34);ctx.fillStyle=curr?"#6C5CE7":"#666";ctx.font="bold 21px Arial";ctx.fillText(hora,200,y+110);y+=190});ctx.fillStyle="#F5F0FF";ctx.beginPath();ctx.roundRect(60,y+10,960,110,20);ctx.fill();ctx.fillStyle="#2D0B5A";ctx.font="bold 26px Arial";ctx.fillText("Entrega: "+dir.slice(0,38),90,y+50);ctx.font="20px Arial";ctx.fillStyle="#333";ctx.fillText(settings.desc.slice(0,70),90,y+85);$("preview").src=canvas.toDataURL("image/jpeg",.92);$("preview").style.display="block";$("share").style.display="block";$("msg").style.display="block"}
-async function compartir(){let canvas=$("c");if(!canvas.width)return alert("Primero genera la imagen.");let pedido=$("pedido").value.trim()||"Trabajo";canvas.toBlob(async blob=>{if(!blob)return;let file=new File([blob],`INVENTA-${pedido.replace(/[^\w-]+/g,"_")}.jpg`,{type:"image/jpeg"});if(navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file],title:`Trabajo ${pedido}`,text:`Seguimiento de ${pedido} - ${settings.name}`});return}catch(e){if(e.name==="AbortError")return}}let url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);alert("Imagen descargada. Compártela desde Galería o Descargas.")},"image/jpeg",.92)}
-$("generate").onclick=generar;$("share").onclick=compartir;$("adminBtn").onclick=()=>{if(admin){admin=false;document.body.classList.remove("is-admin");$("adminBtn").textContent="ADMIN"}else{$("login").style.display="flex";$("err").textContent=""}};$("close").onclick=()=>$("login").style.display="none";$("enter").onclick=()=>{if($("user").value.trim().toLowerCase()==="inventa"&&$("pass").value==="1234"){admin=true;document.body.classList.add("is-admin");$("adminBtn").textContent="SALIR";$("login").style.display="none"}else $("err").textContent="Usuario o clave incorrectos."};$("saveSettings").onclick=()=>{if(!admin)return;settings={name:$("brandName").value.trim()||"INVENTA MANUALIDADES",desc:$("brandDesc").value.trim()};localStorage.setItem(KEY,JSON.stringify(settings));apply();alert("Configuración guardada.")};apply();
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const firebaseConfig = { apiKey: "AIzaSyCmSEMVVBmrxRGOIQ9vJkghqkpqR_gKYis", authDomain: "manualidades-pwa.firebaseapp.com", projectId: "manualidades-pwa", storageBucket: "manualidades-pwa.firebasestorage.app", messagingSenderId: "729918672131", appId: "1:729918672131:web:e29b58a7f89eaeed5ead36" };
+const appFB = initializeApp(firebaseConfig);
+const db = getFirestore(appFB);
+const settingsRef = doc(db, "inventa_config", "rastreo");
+
+const KEY="inventa_rastreo_config_v1";
+let admin=false,settings={name:"INVENTA MANUALIDADES",desc:"MAQUETAS • MANUALIDADES • EXPERIMENTOS • PROYECTOS ESCOLARES"};
+function loadLocal(){try{return JSON.parse(localStorage.getItem(KEY))||settings}catch(e){return settings}}
+const $=id=>document.getElementById(id);
+function apply(){ $("brandTitle").textContent=settings.name;$("brandSubtitle").textContent=settings.desc;$("brandName").value=settings.name;$("brandDesc").value=settings.desc}
+
+function generar(){
+  let canvas=$("c"),ctx=canvas.getContext("2d"),pedido=$("pedido").value.trim()||"Trabajo",dir=$("dir").value.trim()||"Lugar por confirmar",idx=Number($("estado").value);
+  ctx.fillStyle="#00D1C1";ctx.fillRect(0,0,1080,1650);
+  ctx.fillStyle="white";ctx.beginPath();ctx.roundRect(30,180,1020,1420,40);ctx.fill();
+  ctx.fillStyle="#2D0B5A";ctx.beginPath();ctx.arc(540,110,95,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle="white";ctx.font="bold 42px Arial";ctx.textAlign="center";ctx.fillText("INVENTA",540,125);
+  ctx.fillStyle="#2D0B5A";ctx.font="bold 48px Arial";ctx.textAlign="left";ctx.fillText("Seguimiento de Pedido",60,310);
+  ctx.font="26px Arial";ctx.fillStyle="#555";ctx.fillText("Trabajo: "+pedido.slice(0,40),60,355);
+  let estados=[{t:"PEDIDO",d:"Pedido confirmado",ic:"01"},{t:"EN TALLER",d:"Tu manualidad está en producción",ic:"02"},{t:"EN CAMINO",d:"En ruta con nuestro mensajero",ic:"03"},{t:"PEDIDO EN EL LUGAR",d:"Entregado / En el lugar",ic:"04"}];
+  let y=450;
+  estados.forEach((e,i)=>{
+    let done=i<idx,curr=i===idx;
+    if(i<3){ctx.strokeStyle=done||curr?"#00B894":"#eee";ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(110,y+70);ctx.lineTo(110,y+160);ctx.stroke()}
+    ctx.fillStyle=done?"#00B894":curr?"#6C5CE7":"#ddd";ctx.beginPath();ctx.arc(110,y+35,38,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="white";ctx.font="bold 25px Arial";ctx.textAlign="center";ctx.fillText(done?"✓":e.ic,110,y+44);
+    ctx.textAlign="left";ctx.fillStyle=done||curr?"#2D0B5A":"#aaa";ctx.font="bold 34px Arial";ctx.fillText(e.t,190,y+28);
+    ctx.fillStyle="#555";ctx.font="24px Arial";ctx.fillText(e.d,190,y+68);
+    let hora=curr?"Estado actual":done?"Completado":"Pendiente";
+    ctx.fillStyle="#f1f2f6";ctx.fillRect(190,y+85,400,34);ctx.fillStyle=curr?"#6C5CE7":"#666";ctx.font="bold 21px Arial";ctx.fillText(hora,200,y+110);y+=190
+  });
+  ctx.fillStyle="#F5F0FF";ctx.beginPath();ctx.roundRect(60,y+10,960,110,20);ctx.fill();
+  ctx.fillStyle="#2D0B5A";ctx.font="bold 26px Arial";ctx.fillText("Entrega: "+dir.slice(0,38),90,y+50);
+  ctx.font="20px Arial";ctx.fillStyle="#333";ctx.fillText(settings.desc.slice(0,70),90,y+85);
+  $("preview").src=canvas.toDataURL("image/jpeg",.92);$("preview").style.display="block";$("share").style.display="block";$("msg").style.display="block"
+}
+async function compartir(){
+  let canvas=$("c");if(!canvas.width)return alert("Primero genera la imagen.");
+  let pedido=$("pedido").value.trim()||"Trabajo";
+  canvas.toBlob(async blob=>{
+    if(!blob)return;let file=new File([blob],`INVENTA-${pedido.replace(/[^\w-]+/g,"_")}.jpg`,{type:"image/jpeg"});
+    if(navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file],title:`Trabajo ${pedido}`,text:`Seguimiento de ${pedido} - ${settings.name}`});return}catch(e){if(e.name==="AbortError")return}}
+    let url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  },"image/jpeg",.92)
+}
+$("generate").onclick=generar;$("share").onclick=compartir;
+$("adminBtn").onclick=()=>{if(admin){admin=false;document.body.classList.remove("is-admin");$("adminBtn").textContent="ADMIN"}else{$("login").style.display="flex";$("err").textContent=""}};
+$("close").onclick=()=>$("login").style.display="none";
+$("enter").onclick=()=>{if($("user").value.trim().toLowerCase()==="inventa"&&$("pass").value==="1234"){admin=true;document.body.classList.add("is-admin");$("adminBtn").textContent="SALIR";$("login").style.display="none"}else $("err").textContent="Incorrecto";};
+$("saveSettings").onclick=async()=>{
+  if(!admin)return;
+  settings={name:$("brandName").value.trim()||"INVENTA MANUALIDADES",desc:$("brandDesc").value.trim()||"MAQUETAS • MANUALIDADES"};
+  localStorage.setItem(KEY,JSON.stringify(settings));apply();
+  try{await setDoc(settingsRef, settings);alert("✅ Guardado y sincronizado en todos")}catch(e){alert("Guardado local, error: "+e.message)}
+};
+
+async function init(){
+  // 1. CARGA LOCAL INSTANTANEA
+  settings=loadLocal();apply();$("syncStatus").textContent="● local ✓";
+  // 2. FIREBASE
+  try{
+    const snap=await getDoc(settingsRef);
+    if(snap.exists()){settings=snap.data();localStorage.setItem(KEY,JSON.stringify(settings));apply();$("syncStatus").textContent="● Firebase ✓";}
+    else{await setDoc(settingsRef, settings);}
+    onSnapshot(settingsRef,(s)=>{if(s.exists()){settings=s.data();localStorage.setItem(KEY,JSON.stringify(settings));apply();}});
+  }catch(e){$("syncStatus").textContent="● offline";}
+}
+init();
 </script></body></html>
